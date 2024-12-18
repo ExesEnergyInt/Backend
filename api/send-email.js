@@ -14,6 +14,13 @@ module.exports = async (req, res) => {
       .json({ status: "fail", error: "All fields are required." });
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res
+      .status(400)
+      .json({ status: "fail", error: "Invalid email address." });
+  }
+
   // Nodemailer configuration
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -30,9 +37,9 @@ module.exports = async (req, res) => {
   try {
     // Send mail
     await transporter.sendMail({
-      from: email,
+      from: `"${name}" <${email}>`,
       to: process.env.EMAIL_RECIEVE,
-      subject: `Message from ${name} (${email}): ${subject}`,
+      subject: subject,
       text: message,
     });
 
