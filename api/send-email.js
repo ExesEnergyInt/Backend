@@ -48,6 +48,12 @@ module.exports = async (req, res) => {
         replyTo: `${email}`,
         subject: subject,
         text: message,
+        html: `<div>
+              <h1>Name: ${name} </h1>
+              <p>Email: ${email} </p>
+              <p>Subject: ${subject} </p>
+              <p>Text: ${message} </p>
+              </div>`,
       });
 
       return res
