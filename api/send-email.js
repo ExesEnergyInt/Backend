@@ -53,6 +53,8 @@ module.exports = async (req, res) => {
               <p>Email: ${email} </p>
               <p>Subject: ${subject} </p>
               <p>Text: ${message} </p>
+
+              <p><i> Message from Exesenergy Website</i></p>
               </div>`,
       });
 
