@@ -11,5 +11,8 @@
     "dev": "vercel dev",
     "build": "vercel build",
     "start": "vercel start"
+  },
+  "devDependencies": {
+    "vercel": "^39.2.2"
   }
 }
