@@ -2,7 +2,8 @@ const nodemailer = require("nodemailer");
 const cors = require("cors");
 
 const corsMiddleware = cors({
-  origin: ["https://exesenergywebsite.vercel.app/", "https://exesenergy.co", "https://www.exesenergy.co/contact"],
+  // origin: ["https://exesenergywebsite.vercel.app/", "https://exesenergy.co", "https://www.exesenergy.co/contact"],
+  origin: "*",
   methods: ["POST"],
 });
 
