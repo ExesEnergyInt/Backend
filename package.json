@@ -8,11 +8,7 @@
     "nodemailer": "^6.9.16"
   },
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel start"
-  },
-  "devDependencies": {
-    "vercel": "^39.2.2"
+    "dev": "node api/send-email.js", 
+    "start": "nodemon api/send-email.js" 
   }
 }
