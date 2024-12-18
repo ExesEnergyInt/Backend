@@ -45,6 +45,7 @@ module.exports = async (req, res) => {
       await transporter.sendMail({
         from: `"${name}" <${email}>`,
         to: process.env.EMAIL_RECIEVE,
+        replyTo: `${email}`,
         subject: subject,
         text: message,
       });
