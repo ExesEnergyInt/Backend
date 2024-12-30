@@ -1,5 +1,18 @@
 const nodemailer = require("nodemailer");
 const cors = require("cors");
+const { google } = require("googleapis");
+
+// OAuth2 Client setup
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.Client_ID,
+  process.env.Client_Secret,
+  process.env.REDIRECT_URI // e.g., 'https://developers.google.com/oauthplayground'
+);
+
+// Set the refresh token
+oAuth2Client.setCredentials({
+  refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+});
 
 const corsMiddleware = cors({ origin: "*", methods: ["POST"] });
 
@@ -25,16 +38,19 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: "Invalid email address." });
       }
 
-      // Create transporter
+      // Get a new access token
+      const accessToken = await oAuth2Client.getAccessToken();
+
+      // Create transporter with refreshed token
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
           type: "OAuth2",
           user: process.env.EMAIL_HOST,
-          pass: process.env.HOST_PASSWORD,
           clientId: process.env.Client_ID,
           clientSecret: process.env.Client_Secret,
           refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+          accessToken: accessToken.token, // Pass the refreshed access token
         },
       });
 
