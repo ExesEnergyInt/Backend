@@ -1,12 +1,13 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const { google } = require("googleapis");
 
 // OAuth2 Client setup
 const oAuth2Client = new google.auth.OAuth2(
-  process.env.Client_ID,
-  process.env.Client_Secret,
-  process.env.REDIRECT_URI // e.g., 'https://developers.google.com/oauthplayground'
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.REDIRECT_URI
 );
 
 // Set the refresh token
@@ -41,34 +42,30 @@ module.exports = async (req, res) => {
       // Get a new access token
       const accessToken = await oAuth2Client.getAccessToken();
 
-      // Create transporter with refreshed token
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
           type: "OAuth2",
           user: process.env.EMAIL_HOST,
-          clientId: process.env.Client_ID,
-          clientSecret: process.env.Client_Secret,
+          clientId: process.env.CLIENT_ID,
+          clientSecret: process.env.CLIENT_SECRET,
           refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-          accessToken: accessToken.token, // Pass the refreshed access token
+          accessToken: accessToken.token,
         },
       });
 
-      await transporter.verify();
-
       const mailOptions = {
         from: `"${name}" <${email}>`,
-        to: process.env.EMAIL_RECIEVE,
+        to: process.env.EMAIL_RECEIVE,
         replyTo: email,
         subject,
-        text: message,
-        html: `<div>
-                <h1>Name: ${name}</h1>
-                <p>Email: ${email}</p>
-                <p>Subject: ${subject}</p>
-                <p>Message: ${message}</p>
-                <p><i>Message from Exesenergy Website</i></p>
-               </div>`,
+        html: `
+          <h1>Name: ${name}</h1>
+          <p>Email: ${email}</p>
+          <p>Subject: ${subject}</p>
+          <p>Message: ${message}</p>
+          <p><i>Message from Exesenergy Website</i></p>
+        `,
       };
 
       await transporter.sendMail(mailOptions);
