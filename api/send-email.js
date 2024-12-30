@@ -41,7 +41,12 @@ module.exports = async (req, res) => {
 
       // Get a new access token
       const accessToken = await oAuth2Client.getAccessToken();
+      if (!accessToken || !accessToken.token) {
+        throw new Error("Failed to retrieve access token.");
+      }
+      console.log("Access token retrieved successfully.");
 
+      // Set up nodemailer transporter
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -52,8 +57,15 @@ module.exports = async (req, res) => {
           refreshToken: process.env.OAUTH_REFRESH_TOKEN,
           accessToken: accessToken.token,
         },
+        debug: true, // Enable debugging
+        logger: true, // Enable logging
       });
 
+      // Verify SMTP transporter
+      await transporter.verify();
+      console.log("SMTP server is ready to send emails.");
+
+      // Mail options
       const mailOptions = {
         from: `"${name}" <${email}>`,
         to: process.env.EMAIL_RECEIVE,
@@ -67,14 +79,17 @@ module.exports = async (req, res) => {
           <p><i>Message from Exesenergy Website</i></p>
         `,
       };
+      console.log("Mail options:", mailOptions);
 
+      // Send email
       await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully.");
 
       return res
         .status(200)
         .json({ status: "success", message: "Email sent successfully." });
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Error details:", error);
       return res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });
